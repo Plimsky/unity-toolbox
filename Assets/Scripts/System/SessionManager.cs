@@ -1,17 +1,22 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace System
 {
-    public abstract class SessionManager : MonoBehaviour
+    public class SessionManager : MonoBehaviour
     {
-        public static SessionManager instance;
+        private int _actualIndexScene;
+        private int _nextIndexScene;
+
+        public static SessionManager Instance;
 
         private void Awake()
         {
-            if (instance == null)
+            if (Instance == null)
             {
-                instance = this;
+                Instance = this;
+                _actualIndexScene = 0;
                 DontDestroyOnLoad(gameObject);
             }
             else
@@ -22,6 +27,31 @@ namespace System
             SceneManager.sceneLoaded += OnSceneLoad;
         }
 
-        protected abstract void OnSceneLoad(Scene scene, LoadSceneMode loadSceneMode);
+        private void OnSceneLoad(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if (scene.buildIndex == _nextIndexScene && _nextIndexScene != 0)
+            {
+                SceneManager.UnloadSceneAsync(_actualIndexScene);
+                _actualIndexScene = _nextIndexScene;
+            }
+        }
+
+        public void LoadLevel(int indexLevel)
+        {
+            _nextIndexScene = indexLevel;
+            StartCoroutine(LoadAsynchronusly(indexLevel));
+        }
+
+        IEnumerator LoadAsynchronusly(int indexLevel)
+        {
+            AsyncOperation operation = SceneManager.LoadSceneAsync(indexLevel, LoadSceneMode.Additive);
+
+            while (!operation.isDone)
+            {
+                float progress = Mathf.Clamp01(operation.progress / 0.9f);
+                Debug.Log("Progress : " + progress);
+                yield return null; // Will wait until the next frame
+            }
+        }
     }
 }
