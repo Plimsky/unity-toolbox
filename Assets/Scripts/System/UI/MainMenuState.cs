@@ -7,12 +7,16 @@ namespace System.UI
         private UIStateEnum _optionsMenu = UIStateEnum.OPTIONSMENU;
 
         public MainMenuState(MenuManager menuManager) : base(menuManager)
-        {}
+        {
+            State = UIStateEnum.MAINMENU;
+        }
 
         private void PlayButton()
         {
             if (!_enabled)
                 return;
+
+            SessionManager.Instance.LoadLevel(1);
         }
 
         private void OptionsButton()
@@ -28,11 +32,5 @@ namespace System.UI
             if (!_enabled)
                 return;
         }
-
-        public override void Update()
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

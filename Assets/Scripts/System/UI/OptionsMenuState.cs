@@ -7,21 +7,24 @@ namespace System.UI
         private UIStateEnum _mainMenu = UIStateEnum.MAINMENU;
 
         public OptionsMenuState(MenuManager menuManager) : base(menuManager)
-        {}
+        {
+            State = UIStateEnum.OPTIONSMENU;
+        }
 
         private void VolumeSoundSlider(float volume)
         {
+            if (!_enabled)
+                return;
+
             Debug.Log("Volume : " + volume);
         }
 
         private void BackButton()
         {
-            _menuManager.RemoveLastState(_mainMenu);
-        }
+            if (!_enabled)
+                return;
 
-        public override void Update()
-        {
-            throw new NotImplementedException();
+            _menuManager.RemoveLastState(_mainMenu);
         }
     }
 }

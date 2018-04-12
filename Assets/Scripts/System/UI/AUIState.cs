@@ -6,9 +6,10 @@ using UnityEngine.UI;
 
 namespace System.UI
 {
-    // ReSharper disable once InconsistentNaming
     public abstract class AUIState
     {
+        public UIStateEnum State = UIStateEnum.NONE;
+
         protected bool _enabled;
         protected MenuManager _menuManager;
 
@@ -39,8 +40,7 @@ namespace System.UI
 
                 if (button != null && methodInfo != null)
                 {
-                    UnityAction action = () => methodInfo.Invoke(this, null);
-                    button.onClick.AddListener(action);
+                    button.onClick.AddListener(() => methodInfo.Invoke(this, null));
                 }
 
                 if (slider != null && methodInfo != null)
@@ -66,7 +66,5 @@ namespace System.UI
         {
             return _enabled;
         }
-
-        public abstract void Update();
     }
 }
